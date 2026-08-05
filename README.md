@@ -15,11 +15,11 @@ OncoCare is an intelligent Computer-Aided Diagnosis (CAD) web application design
 
 ---
 
-## 🚀 How to Run Locally
+## How to Run Locally
 
 ### 1. Clone the Repository
-git clone [https://github.com/YOUR_USERNAME/OncoCare-CAD-System.git](https://github.com/YOUR_USERNAME/OncoCare-CAD-System.git)
-cd OncoCare-CAD-System
+git clone [https://github.com/YOUR_USERNAME/Breast-Cancer-Detect.git](https://github.com/YOUR_USERNAME/OncoCare-CAD-System.git)
+cd Breast-Cancer-Detect
 
 ### 2. Backend Setup (FastAPI)
 Open a terminal and navigate to the backend folder:
