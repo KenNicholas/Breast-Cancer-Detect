@@ -1,6 +1,6 @@
 # 🩺 OncoCare: Breast Cancer CAD System
 
-OncoCare is an intelligent Computer-Aided Diagnosis (CAD) web application designed to assist medical professionals in analyzing breast ultrasound images. Powered by Deep Learning and Explainable AI (Grad-CAM), this system provides rapid classifications (Normal, Benign, Malignant) and visual heatmaps to highlight tissue anomalies.
+OncoCare is an intelligent Computer-Aided Diagnosis (CAD) web application designed to assist medical professionals in analyzing breast ultrasound images. Powered by Deep Learning (DenseNet121 model) and Explainable AI (Grad-CAM), this system provides rapid classifications (Normal, Benign, Malignant) and visual heatmaps to highlight tissue anomalies. 
 
 ## Key Features
 * **AI-Powered Diagnostics:** Rapid classification using a trained Deep Learning model.
