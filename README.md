@@ -35,8 +35,7 @@ uvicorn main:app --reload
 
 The backend API will be available at http://localhost:8000
 
-### 3. 
-Open a new terminal and navigate to the frontend folder:
+### 3. Open a new terminal and navigate to the frontend folder:
 cd frontend
 # Install Node modules
 npm install
