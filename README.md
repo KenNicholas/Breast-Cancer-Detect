@@ -2,6 +2,18 @@
 
 OncoCare is an intelligent Computer-Aided Diagnosis (CAD) web application designed to assist medical professionals in analyzing breast ultrasound images. Powered by Deep Learning (DenseNet121 model) and Explainable AI (Grad-CAM), this system provides rapid classifications (Normal, Benign, Malignant) and visual heatmaps to highlight tissue anomalies. 
 
+## 📊 Dataset
+This project uses the **Breast Ultrasound Images (BUSI)** dataset. 
+* **Source / Original Link:** [Kaggle - Breast Ultrasound Images Dataset](https://www.kaggle.com/datasets/aryashah2k/breast-ultrasound-images-dataset)
+* **Classes:** Normal, Benign, Malignant
+* **Preprocessing:** Images were resized to 224x224 pixels, normalized, and augmented with contrast adjustments.
+
+While the live web application uses DenseNet121 model because of its light size, I have also trained and experimented with other deep learning models for this dataset, which are EfficientNet-B7 and ResNet50 and their overlay. You can explore the alternative models in my Hugging Face repository here: https://huggingface.co/Ken2707/PLACEHOLDER/tree/main
+
+Click this video link to watch the web application demo: PLACEHOLDER
+
+Web application screenshots: PLACEHOLDER
+
 ## Key Features
 * **AI-Powered Diagnostics:** Rapid classification using a trained Deep Learning model.
 * **Explainable AI (Grad-CAM):** Generates transparent visual heatmaps showing exactly which areas of the ultrasound triggered the AI's decision.
@@ -22,7 +34,8 @@ git clone [https://github.com/YOUR_USERNAME/Breast-Cancer-Detect.git](https://gi
 cd Breast-Cancer-Detect
 
 ### 2. Backend Setup (FastAPI)
-Open a terminal and navigate to the backend folder:
+Open a terminal and navigate to the backend folder: 
+
 cd backend
 # Create a virtual environment (recommended)
 python -m venv venv
