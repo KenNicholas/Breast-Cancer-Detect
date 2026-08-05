@@ -18,6 +18,30 @@ OncoCare is an intelligent Computer-Aided Diagnosis (CAD) web application design
 ## 🚀 How to Run Locally
 
 ### 1. Clone the Repository
-```bash
 git clone [https://github.com/YOUR_USERNAME/OncoCare-CAD-System.git](https://github.com/YOUR_USERNAME/OncoCare-CAD-System.git)
 cd OncoCare-CAD-System
+
+### 2. Backend Setup (FastAPI)
+Open a terminal and navigate to the backend folder:
+cd backend
+# Create a virtual environment (recommended)
+python -m venv venv
+venv\Scripts\activate  # On Windows
+# source venv/bin/activate  # On Mac/Linux
+# Install dependencies
+pip install -r requirements.txt
+# Run the server
+uvicorn main:app --reload
+
+The backend API will be available at http://localhost:8000
+
+### 3. 
+Open a new terminal and navigate to the frontend folder:
+cd frontend
+# Install Node modules
+npm install
+# Start the development server
+npm run dev
+The web app will be available at http://localhost:5173
+
+Disclaimer: This application serves as an initial decision-support system and does not replace professional medical diagnosis.
