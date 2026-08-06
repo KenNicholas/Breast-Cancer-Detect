@@ -7,8 +7,29 @@ const API_URL = import.meta.env.DEV
 
 function App() {
   const [activeTab, setActiveTab] = useState('analysis');
-  const [user, setUser] = useState(null);
-  const [scanHistory, setScanHistory] = useState([]);
+  const [isLoginMode, setIsLoginMode] = useState(true);
+    
+  // Initialize User
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("oncocare_user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  // Initialize active user from local storage
+  const [scanHistory, setScanHistory] = useState(() => {
+    const savedUser = localStorage.getItem("oncocare_user");
+    const parsedUser = savedUser ? JSON.parse(savedUser) : null;
+    const historyKey = parsedUser ? `scan_history_${parsedUser.email}` : "scan_history_guest";
+    
+    const savedHistory = localStorage.getItem(historyKey);
+    return savedHistory ? JSON.parse(savedHistory) : [];
+  });
+
+  // keep scan history in local storage whenever it change
+  useEffect(() => {
+    const historyKey = user ? `scan_history_${user.email}` : "scan_history_guest";
+    localStorage.setItem(historyKey, JSON.stringify(scanHistory));
+  }, [scanHistory, user]);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -16,24 +37,69 @@ function App() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
-  const handleLogin = (e) => {
+  const handleAuthSubmit = (e) => {
     e.preventDefault();
-    setUser({
-      name: "Dr. Guest User",
-      email: "doctor@oncocare.com",
-      role: "Radiologist",
-      joined: "August 2026"
-    });
-    setActiveTab('analysis');
+      
+    const inputEmail = e.target.email.value;
+
+    if (isLoginMode) {
+      // login
+      const savedData = localStorage.getItem("registered_user");
+      if (savedData) {
+        const registeredUser = JSON.parse(savedData);
+        if (registeredUser.email === inputEmail) {
+          setUser(registeredUser);
+          localStorage.setItem("oncocare_user", JSON.stringify(registeredUser));
+          
+          // user's history
+          const userHistory = localStorage.getItem(`scan_history_${registeredUser.email}`);
+          setScanHistory(userHistory ? JSON.parse(userHistory) : []);
+          
+          setActiveTab('analysis');
+        } else {
+          alert("Invalid email. Please try again or Sign Up.");
+        }
+      } else {
+        alert("No account found. Please Sign Up first.");
+      }
+    } else {
+      // sign up
+      const inputName = e.target.name.value;
+      const inputRole = e.target.role.value;
+        
+      const currentDate = new Date();
+      const joinedDate = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+      const newUser = {
+        name: inputName,
+        email: inputEmail,
+        role: inputRole,
+        joined: joinedDate
+      };
+
+      localStorage.setItem("registered_user", JSON.stringify(newUser));
+      setUser(newUser);
+      localStorage.setItem("oncocare_user", JSON.stringify(newUser));
+      
+      // if new user -> new history
+      const userHistory = localStorage.getItem(`scan_history_${newUser.email}`);
+      setScanHistory(userHistory ? JSON.parse(userHistory) : []);
+      
+      setActiveTab('analysis');
+    }
   };
 
   const handleLogout = () => {
     setUser(null);
-    setScanHistory([]); 
+    localStorage.removeItem("oncocare_user"); 
+    
+    // change history to guest history
+    const guestHistory = localStorage.getItem("scan_history_guest");
+    setScanHistory(guestHistory ? JSON.parse(guestHistory) : []);
+    
     setActiveTab('auth');
   };
 
-  // --- FUNGSI ANALISIS ---
   const handleFile = (file) => {
     if (file && file.type.startsWith('image/')) {
       setSelectedImage(file);
@@ -134,20 +200,50 @@ function App() {
   const isNormal = result && result.prediction.toLowerCase() === "normal";
   const confidencePercent = result ? result.confidence * 100 : 0;
 
-  {/* login */}
   const renderAuth = () => (
     <div className="flex flex-col items-center justify-center min-h-[70vh] w-full">
       <div className="bg-slate-800 border border-slate-700 p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
         <h2 className="text-3xl font-bold text-teal-400 mb-2">Welcome to OncoCare</h2>
-        <p className="text-slate-400 mb-8 text-sm">Sign in to sync your diagnostic history securely.</p>
+        <p className="text-slate-400 mb-6 text-sm">
+          {isLoginMode ? "Sign in to continue your session." : "Create an account to securely save your history."}
+        </p>
         
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input type="email" placeholder="Email Address" required className="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 focus:outline-none focus:border-teal-500 transition" />
-          <input type="password" placeholder="Password" required className="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 focus:outline-none focus:border-teal-500 transition" />
+        <form onSubmit={handleAuthSubmit} className="space-y-4">
+          {!isLoginMode && (
+            <input name="name" type="text" placeholder="Full Name (e.g. Dr. Ken)" required className="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 focus:outline-none focus:border-teal-500 transition animate-fade-in" />
+          )}
+          
+          <input name="email" type="email" placeholder="Email Address" required className="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 focus:outline-none focus:border-teal-500 transition" />
+          
+          {!isLoginMode && (
+            <div className="relative animate-fade-in">
+              <select name="role" required defaultValue="" className="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-300 focus:outline-none focus:border-teal-500 transition appearance-none cursor-pointer">
+                <option value="" disabled hidden>Select Your Role</option>
+                <option value="Radiologist">Radiologist</option>
+                <option value="Oncologist">Oncologist</option>
+                <option value="General Practitioner">General Practitioner</option>
+                <option value="Medical Student">Medical Student</option>
+                <option value="Guest Researcher">Guest Researcher</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                ▼
+              </div>
+            </div>
+          )}
+
+          <input name="password" type="password" placeholder="Password" required className="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 focus:outline-none focus:border-teal-500 transition" />
+          
           <button type="submit" className="w-full py-3 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl transition shadow-lg mt-4">
-            Login / Sign Up
+            {isLoginMode ? "Login" : "Sign Up"}
           </button>
         </form>
+
+        <div className="mt-6 text-slate-400 text-sm">
+          {isLoginMode ? "Don't have an account? " : "Already have an account? "}
+          <button onClick={() => setIsLoginMode(!isLoginMode)} className="text-teal-400 hover:text-teal-300 font-semibold transition">
+            {isLoginMode ? "Sign Up here" : "Login here"}
+          </button>
+        </div>
 
         <div className="flex items-center my-6">
           <div className="flex-grow border-t border-slate-700"></div>
@@ -170,7 +266,7 @@ function App() {
           <h2 className="text-2xl font-bold text-slate-200">Analysis History</h2>
           {!user && (
             <p className="text-amber-400 text-sm mt-1 bg-amber-900/30 px-3 py-1 rounded-lg inline-block border border-amber-800/50">
-              ⚠️ Guest Mode: History is stored locally and will be lost when you close this page.
+              ⚠️ Guest Mode: History is stored locally and will be lost when you close this browser.
             </p>
           )}
         </div>
@@ -249,8 +345,6 @@ function App() {
 
   const renderAnalysis = () => (
     <div className="w-full max-w-6xl animate-fade-in">
-      
-      {/* title */}
       <header className="w-full text-center mb-8">
         <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-teal-400">
           🩺 OncoCare: Breast Cancer CAD System
@@ -261,12 +355,9 @@ function App() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch mb-6">
-        
-        {/* Upload & Preview */}
         <div className="bg-slate-800 border border-slate-700 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
           <div>
             <h2 className="text-lg font-semibold mb-3 text-slate-200 text-center">Upload Ultrasound Image</h2>
-            
             <div
               onDragOver={handleDragOver}
               onDrop={handleDrop}
@@ -303,11 +394,9 @@ function App() {
           </div>
         </div>
 
-        {/* Diagnostics & Results */}
         <div className="bg-slate-800 border border-slate-700 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
           <div>
             <h2 className="text-lg font-semibold mb-3 text-slate-200 text-center">Diagnostics & Visualization</h2>
-
             <div className="bg-slate-900/50 border border-slate-700/60 rounded-2xl p-5 flex flex-col items-center justify-center text-center">
               {result ? (
                 <div className="w-full space-y-4 text-left">
@@ -334,7 +423,6 @@ function App() {
                     </div>
                   </div>
 
-                  {/* Grad-CAM Section */}
                   <div>
                     <p className="text-xs font-semibold text-slate-400 mb-2">Grad-CAM Visualization:</p>
                     {isNormal ? (
@@ -363,7 +451,6 @@ function App() {
         </div>
       </div>
 
-      {/* Quick Sample Photos */}
       <div className="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 shadow-xl w-full">
         <p className="text-sm font-semibold text-slate-300 mb-3 text-center">⚡ Quick Sample Photos (Click to Test):</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -393,12 +480,8 @@ function App() {
     </div>
   );
 
-  // ==========================================
-  // STRUKTUR UTAMA
-  // ==========================================
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 font-sans flex flex-col items-center">
-      {/* NAVBAR ATAS */}
       <nav className="w-full bg-slate-950 border-b border-slate-800 sticky top-0 z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -439,7 +522,6 @@ function App() {
         </div>
       </nav>
 
-      {/* KONTEN UTAMA */}
       <main className="w-full flex-grow flex flex-col items-center py-6 px-4 md:px-10">
         {activeTab === 'auth' && renderAuth()}
         {activeTab === 'history' && renderHistory()}
