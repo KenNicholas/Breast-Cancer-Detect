@@ -40,8 +40,10 @@ Open a terminal and navigate to the backend folder:
 cd backend
 # Create a virtual environment (recommended)
 python -m venv venv
-venv\Scripts\activate  # On Windows
-# source venv/bin/activate  # On Mac/Linux
+### On windows
+venv\Scripts\activate  
+### On Mac/Linux
+source venv/bin/activate 
 # Install dependencies
 pip install -r requirements.txt
 # Run the server
