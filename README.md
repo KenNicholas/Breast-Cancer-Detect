@@ -31,6 +31,7 @@ Web application screenshots: PLACEHOLDER
 
 ### 1. Clone the Repository
 git clone [https://github.com/YOUR_USERNAME/Breast-Cancer-Detect.git](https://github.com/YOUR_USERNAME/OncoCare-CAD-System.git)
+
 cd Breast-Cancer-Detect
 
 ### 2. Backend Setup (FastAPI)
