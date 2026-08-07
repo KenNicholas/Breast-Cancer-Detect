@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
-const API_URL = import.meta.env.DEV 
-  ? "http://localhost:8000/api/scan" 
-  : "/api/scan";
+const BASE_URL = import.meta.env.DEV 
+  ? "http://localhost:8000" 
+  : "https://ken2707-breast-cancer-detect.hf.space";
 
 function App() {
   const [activeTab, setActiveTab] = useState('analysis');

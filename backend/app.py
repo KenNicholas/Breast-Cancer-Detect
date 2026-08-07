@@ -23,7 +23,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"], 
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -44,7 +44,6 @@ try:
     
     target_layers = [model.features[-1]]
     cam = GradCAM(model=model, target_layers=target_layers)
-    
     
 except Exception as e:
     print(f"Gagal memuat model. Pastikan path benar. Error: {e}")
@@ -189,4 +188,3 @@ def delete_history(item_id: int):
         
     except Exception as e:
         return {"status": "error", "message": str(e)}
-    
