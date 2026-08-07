@@ -57,6 +57,7 @@ cd frontend
 npm install
 # Start the development server
 npm run dev
+
 The web app will be available at http://localhost:5173
 
 Disclaimer: This application serves as an initial decision-support system and does not replace professional medical diagnosis.
