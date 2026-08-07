@@ -22,6 +22,7 @@ This project uses the **Breast Ultrasound Images (BUSI)** dataset.
 While the live web application uses DenseNet121 model because of its light size, I have also trained and experimented with other deep learning models for this dataset, which are EfficientNet-B7 and ResNet50 and their overlay. You can explore the alternative models in my Hugging Face repository here: https://huggingface.co/Ken2707/URL_detect_models/tree/main
 
 Web application screenshots:
+
 <img width="300" height="200" alt="Screenshot 2026-08-07 162249" src="https://github.com/user-attachments/assets/f52168c2-7902-4436-8007-30b90aece714" />
 <img width="300" height="200" alt="Screenshot 2026-08-07 162410" src="https://github.com/user-attachments/assets/0d83b5f7-faf4-438a-8360-c5a155abffb1" />
 <img width="300" height="200" alt="Screenshot 2026-08-07 162437" src="https://github.com/user-attachments/assets/1da4fc2e-cff2-4647-8624-2f78d1fff94f" />
